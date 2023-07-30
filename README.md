@@ -1,1 +1,2 @@
-# library_management_system-JonasOloroso_JohnCarloBriones
+# Library Management System
+by Jonas Oloroso & John Carlo Briones
