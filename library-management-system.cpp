@@ -388,6 +388,7 @@ void updateB(vector<BookPatron>* bkPt, vector<CheckOut>* checkout, int i){
 		pos++;
 	}
 	if(isExisting and !isSame and !isCheckedOut){
+		valid = 0;
 		int confirm;
 		cout << "\t\tAre you sure you want to update the information?" << endl;
 		cout << "\t\t1: Confirm | 2: Cancel" << endl;
