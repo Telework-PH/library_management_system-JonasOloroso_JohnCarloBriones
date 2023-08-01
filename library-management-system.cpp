@@ -970,12 +970,12 @@ void loginsettings(vector<string>* logins){
 		}
 		else if(j == 3){
             string sure;
-            cout<<"\t\tThe System automatically close if you reset the LOGIN SETTING to Restart the System"<< endl;
+            cout<<"\t\tNOTE: The System automatically close if you reset the LOGIN SETTING\n\t\t      then Password and login History will be reseted.\n"<< endl;
             cout<<"\t\tAre you sure you want to reset LOGIN SETTING ?"<<endl;
             while(true){
-            cout<<"\t\t1: Yes | 2: No \n\t\t> ";
-            cin>>sure;
-            if(sure == "1"){remove("loginFile.txt"); exit(0);}
+            cout<<"\t\t1: Yes | 2: Back \n\t\t> ";
+            getline(cin>>ws, sure);
+            if(sure == "1"){remove("loginFile.txt"); cout<<"\t\tLogin Settings Successfully Reseted.."<<endl;exit(0);}
             else if(sure == "2"){ break;}
             else {cout<<"\t\tInvalid Input.."<<endl;}}
 		}
