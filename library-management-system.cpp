@@ -44,6 +44,10 @@ bool ids(long* v){ // Function for getting user input for IDs (search ID/set ID)
 			cout << "\t\tInvalid input" << endl;
 			return false;
 		}
+	if(id.at(0) == '-'){
+		cout << "\t\tInvalid input" << endl;
+		return false;
+	}
 	*v = stoul(id);
 	return true;
 }
@@ -224,6 +228,18 @@ void displayInfosBookPatron(BookPatron bookpatron,int i,int z){
 	}
 	cout << left << setw(68) << setfill('-') << "\t\t*"; cout << "*" << endl;
 }
+bool searching(string s,string m){
+	m = toLower(m);
+	bool match = 0;
+	int ms = m.size();
+	for(int i = 0; i <= (int)(s.size())-ms; i++){
+		if(s.substr(i,ms)==m){
+			match = 1;
+		}
+	}
+	return match;
+}
+
 
 void addB(vector<BookPatron>* bkPt, int i){
 	system("CLS");
@@ -286,29 +302,18 @@ void searchB(vector<BookPatron>* bkPt, int i){
 	cout << "\t\tSearch: ";
 	string search;
 	int pos = -1;
-	bool isID = 1;
 	getline(cin>>ws,search);
-	for(char c: search)
-		if(!isdigit(c)) isID = 0;
-
 	for(auto a : *bkPt){
-		long id = a.ID;
-		string tn = toLower(a.titleName);
-		string an = toLower(a.authorEmail);
-		string pc = toLower(a.publisherContact);
-		string sa = toLower(a.statusAddress);
-		if(isID){
-			if(id == stol(search)){
-				displayInfosBookPatron(a,i,1);
-				pos = 1;
-			}
-		}
-		else{
-			search = toLower(search);
-			if(tn == search or an == search or pc == search or sa == search){
-				displayInfosBookPatron(a,i,1);
-				pos = 1;
-			}
+		bool id=0, tn=0, an=0, pc=0, sa=0;
+		search = toLower(search);
+		id = searching(to_string(a.ID),search);
+		tn = searching(toLower(a.titleName),search);
+		an = searching(toLower(a.authorEmail),search);
+		pc = searching(toLower(a.publisherContact),search);
+		sa = searching(toLower(a.statusAddress),search);
+		if(tn or an or pc or id or sa){
+			displayInfosBookPatron(a,i,1);
+			pos = 1;
 		}
 	}
 	if(pos == -1){
@@ -496,7 +501,9 @@ void displayB(vector<BookPatron>* bkPt, int i){
 				else if(ss==2){
 					vector<string> s;
 					vector<BookPatron> temp;
-					for(auto a : (*bkPt)) s.push_back(a.titleName);
+					for(auto a : (*bkPt)){
+						s.push_back(toLower(a.titleName));
+					}
 					s = alphabaticallySort(s);
 					for(int i = 0; i < (int)(s.size()); i++)
 						for(int j = 0; j < (int)(s.size()); j++)
@@ -827,23 +834,37 @@ void enterPassword(string* pass){
 		if(ch == 10) break;
 	}
 }
+
+void changepass(int* confirm, bool* valid){
+	cout << "\n\t\t\tAre you sure you want to change password?" << endl;
+	cout << "\t\t\t1: Confirm | 2: Cancel" << endl;
+	while(!(*valid)){ cout << "\t\t\t> "; choose(confirm,1,2,valid);}
+}
+
 void login(vector<string>* logins, string dt){
 	getFilel(logins);
+	int repeat = 0;
 	while(true){
+		repeat++;
 		system("CLS");
 		header();
 		int confirm;
 		bool valid = 0;
 		cout << endl << "\t\t                               LOGIN" << endl << endl;
-		string pass = "";
+		string pass = "", newP = "";
 		if((*logins).empty()) {
+			string retrive;
 			cout << "\t\t\tSet password: "; enterPassword(&pass);
-			cout << "\n\t\t1: Confirm | 2: Re-enter" << endl;
-			while(!valid) {cout << "\t\t> "; choose(&confirm,1,2,&valid);}
+			cout << "\n\t\t\tEnter an information in case you forgot your password\n\t\t\t> ";
+			getline(cin>>ws,retrive);
+			cout << "\n\t\t\t1: Confirm | 2: Re-enter" << endl; 
+			while(!valid) {cout << "\t\t\t> "; choose(&confirm,1,2,&valid);}
+			valid = false;
 			if(confirm==1){
-				cout << "\t\tPassword has been set!" << endl;
+				cout << "\t\t\tPassword has been set!" << endl;
 				(*logins).push_back(pass);
-				cout << "\t\t"; system("PAUSE");
+				(*logins).push_back(retrive);
+				cout << "\t\t\t"; system("PAUSE");
 				break;
 			}
 			else if(confirm==2) continue;
@@ -852,6 +873,28 @@ void login(vector<string>* logins, string dt){
 			cout << "\t\t\tEnter password: "; enterPassword(&pass);
 			if(pass == (*logins)[0]) break;
 			else cout << endl << endl << "\t\t\tACCESS DENIED!!" << endl << endl;
+			if(repeat >= 3){
+				cout << "\t\t\tForgot password?" << endl;
+				cout << "\t\t\t1: Yes | 2: Re-enter | 3: Exit" << endl;
+				while(!valid) {cout << "\t\t\t> "; choose(&confirm,1,3,&valid);}
+				valid = 0;
+				if(confirm==1){
+					string ret;
+					cout << "\t\t\tEnter retrival data: "; getline(cin>>ws,ret);
+					if(ret == (*logins)[1]){
+						cout << "\n\t\t\tNew Password: "; enterPassword(&newP);
+						changepass(&confirm,&valid);
+						if(confirm==1){
+							cout << "\n\t\t\tPassword successfuly changed!" << endl; 
+							(*logins)[0] = newP;
+						}
+					}else{
+						cout << "\t\t\tIncorrect information..." << endl;
+					}
+				}
+				else if(confirm==2) continue;
+				else exit(0);
+			}
 			cout << "\t\t\t"; system("PAUSE");
 		}
 		
@@ -885,9 +928,7 @@ void loginsettings(vector<string>* logins){
 				cout << "\n\t\t\tNew Password     : "; enterPassword(&newP);
 				if(oldP == (*logins)[0]){
 					if(oldP != newP){
-						cout << "\n\t\tAre you sure you want to change password?" << endl;
-						cout << "\t\t1: Confirm | 2: Cancel" << endl;
-						while(!valid){ cout << "\t\t> "; choose(&confirm,1,2,&valid);}
+						changepass(&confirm,&valid);
 						valid = false;
 						if(confirm==1){
 							(*logins)[0] = newP;
@@ -916,7 +957,7 @@ void loginsettings(vector<string>* logins){
 			cout << left << setw(68) << setfill('-') << "\t\t*"; cout << "*" << endl;
 			cout << "\t\t|                          LOGIN HISTORY                          |" << endl;
 			for(auto a : *logins){
-				if(q > 0){
+				if(q > 1){
 					if(a.size() != 0){
 						cout << "\t\t| " << left << setw(64) << setfill(' ') << a; cout << "|" << endl;
 					}
@@ -940,7 +981,7 @@ int main(){
 	int cdate[3] = {day,month,year};
 	char* date_time = ctime(&now);
 	string dt = date_time;
-	
+
 	vector<string> logins;
 	login(&logins,dt);
 
