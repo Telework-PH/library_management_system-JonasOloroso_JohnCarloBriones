@@ -15,7 +15,7 @@ void choose(int* l, int s, int e, bool* valid){// unified function for getting u
 	string chs;
 	*valid = true;
 	getline(cin>>ws,chs);
-	
+
 	if(chs == "-1"){
 		*l = stoi(chs);
 	}else{
@@ -32,7 +32,7 @@ void choose(int* l, int s, int e, bool* valid){// unified function for getting u
 				*valid = false;
 			}
 		}
-		
+
 	}
 }
 
@@ -93,7 +93,7 @@ vector<string> alphabaticallySort(vector<string> a){ // function that sorts the 
 }
 string toLower(string search){ // converts characters into lowercases for mainly for better searching
 	string temp = "";
-	for(char c: search) temp += (c >= 65 and c <= 90 ? c+32 : c); 
+	for(char c: search) temp += (c >= 65 and c <= 90 ? c+32 : c);
 	return temp;
 }
 
@@ -113,7 +113,7 @@ void getFile(vector<BookPatron>* bookpatron,int i){
 			if(pos==3 and print.length() != 0) bk.authorEmail = print;
 			if(pos==4 and print.length() != 0) bk.publisherContact = print;
 			if(pos==5 and print.length() != 0) {bk.statusAddress = print; (*bookpatron).push_back(bk);}
-				
+
 			if(print.length() == 0) pos =0 ;
 		}
 		bpFile.close();
@@ -152,7 +152,7 @@ void getFileC(vector<CheckOut>* checkout){
 			if(pos==3 and print.length() != 0) co.date = print;
 			if(pos==4 and print.length() != 0) co.status = print;
 			if(pos==5 and print.length() != 0) {co.retDate = print; (*checkout).push_back(co);}
-				
+
 			if(print.length() == 0) pos =0 ;
 		}
 		coFile.close();
@@ -216,7 +216,7 @@ void displayInfosBookPatron(BookPatron bookpatron,int i,int z){
 			cout << "\t\t| Status   : " << left << setw(53) << setfill(' ') << bookpatron.statusAddress;  cout << "|" << endl;
 		}
 	}
-	if(i==2){ 
+	if(i==2){
 		cout << "\t\t| Name     : " << left << setw(53) << setfill(' ') << bookpatron.titleName;  cout << "|" << endl;
 	    cout << "\t\t| Email    : " << left << setw(53) << setfill(' ') << bookpatron.authorEmail;  cout << "|" << endl;
 	    cout << "\t\t| Contact  : " << left << setw(53) << setfill(' ') << bookpatron.publisherContact;  cout << "|" << endl;
@@ -575,10 +575,10 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 			while(!valid){ cout << "\t\t> "; choose(&c,1,3,&valid);}
 			valid = false;
 			if(c == 1) break;
-			if(c == 2){ isBook = 0; continue;} 
+			if(c == 2){ isBook = 0; continue;}
 			if(c == 3){ goto BACK;}
 		}
-		else{ 
+		else{
 			cout << "\t\tBook not found..." << endl;
 			cout << "\t\t1: Re-enter | 2: Back" << endl;
 			while(!valid){ cout << "\t\t> "; choose(&c,1,2,&valid);}
@@ -594,7 +594,7 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 			if(add.pID == (*pt)[i].ID){
 				isPatron = true; ppos = i;
 			}
-		if(!isPatron){ 
+		if(!isPatron){
 			cout << "\t\tPatron did not exist" << endl;
 			cout << "\t\t1: Re-enter | 2: Back" << endl;
 			while(!valid){ cout << "\t\t> "; choose(&c,1,2,&valid);}
@@ -613,8 +613,8 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 			else if(c==3) goto BACK;
 		}
 	}
-	
-	if(to_string(cdate[0]).length() == 1) 
+
+	if(to_string(cdate[0]).length() == 1)
 		add.date = "0"+to_string(cdate[0]);
 	else add.date = to_string(cdate[0]);
 	if(to_string(cdate[1]).length() == 1)
@@ -622,7 +622,7 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 	else add.date += "/"+to_string(cdate[1]);
 	add.date += "/"+to_string(cdate[2]);
 	add.status = "Checked-out";
-	
+
 	for(int i = 0; i < (int)((*pt).size()); i++)
 		if(add.pID == (*pt)[i].ID)
 			isPatron = true;
@@ -631,19 +631,19 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 			isExisting = true;
 			cout << "\t\tThis book is currently unavailable!" << endl;
 		}
-	
-	if(!isExisting and isBook and isPatron){ 
+
+	if(!isExisting and isBook and isPatron){
 		(*checkret).push_back(add);
 		(*bk)[bpos].statusAddress = "Unavailable";
 		cout << endl << "\t\tChecked-out successfully!" << endl << endl;
 		cout << endl << "\t\tPlease return book before 21 days to avoid fine." << endl << endl;
 	}
-	setFileC(checkret); 
+	setFileC(checkret);
 	setFile(bk,1);
 	BACK:
 	(*checkret).clear(); (*bk).clear(); (*pt).clear();
 	cout << "\t\t"; system("PAUSE");
-	
+
 }
 void returnBook(vector<CheckOut>* checkret,vector<BookPatron>* bk, int cdate[]){
 	system("CLS");
@@ -681,14 +681,14 @@ void returnBook(vector<CheckOut>* checkret,vector<BookPatron>* bk, int cdate[]){
 		int yyyy = stoi((*checkret)[pos].date.substr(6,4));
 		int date[3] = {dd,mm,yyyy};
 		int days = countNoOfDays(date,cdate);
-		if(to_string(cdate[0]).length() == 1) 
+		if(to_string(cdate[0]).length() == 1)
 			(*checkret)[pos].retDate = "0"+to_string(cdate[0]);
 		else (*checkret)[pos].retDate = to_string(cdate[0]);
 		if(to_string(cdate[1]).length() == 1)
 			(*checkret)[pos].retDate += "/0"+to_string(cdate[1]);
 		else (*checkret)[pos].retDate += "/"+to_string(cdate[1]);
 		(*checkret)[pos].retDate += "/"+to_string(cdate[2]);
-		
+
 		if(days > 21){
 			cout << "\t\tLate return fine: P15/day" << endl;
 			cout << "\t\tDays Late: " << days-21 << endl;
@@ -702,7 +702,7 @@ void returnBook(vector<CheckOut>* checkret,vector<BookPatron>* bk, int cdate[]){
 	}
 	else if(pos == -2) cout << "\t\tThis book has already been returned." << endl << endl;
 	else cout << "\t\tCheck-out information did not exist." << endl << endl;
-	
+
 	setFileC(checkret); setFile(bk,1);
 	BACKRETURN:
 	(*checkret).clear();(*bk).clear();
@@ -812,7 +812,7 @@ void manageCheckRet(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<Boo
 		else if(j == 0) break;
 		else if(j == -1) exit(0);
 	}
-} 
+}
 
 //function for entering password by masking the input
  //function for entering password by masking the input
@@ -857,7 +857,7 @@ void login(vector<string>* logins, string dt){
 			cout << "\t\t\tSet password: "; enterPassword(&pass);
 			cout << "\n\t\t\tEnter an information in case you forgot your password\n\t\t\t> ";
 			getline(cin>>ws,retrive);
-			cout << "\n\t\t\t1: Confirm | 2: Re-enter" << endl; 
+			cout << "\n\t\t\t1: Confirm | 2: Re-enter" << endl;
 			while(!valid) {cout << "\t\t\t> "; choose(&confirm,1,2,&valid);}
 			valid = false;
 			if(confirm==1){
@@ -885,7 +885,7 @@ void login(vector<string>* logins, string dt){
 						cout << "\n\t\t\tNew Password: "; enterPassword(&newP);
 						changepass(&confirm,&valid);
 						if(confirm==1){
-							cout << "\n\t\t\tPassword successfuly changed!" << endl; 
+							cout << "\n\t\t\tPassword successfuly changed!" << endl;
 							(*logins)[0] = newP;
 						}
 					}else{
@@ -897,10 +897,10 @@ void login(vector<string>* logins, string dt){
 			}
 			cout << "\t\t\t"; system("PAUSE");
 		}
-		
+
 	}
 	(*logins).push_back(dt);
-	setFilel(logins); 
+	setFilel(logins);
 	(*logins).clear();
 }
 void loginsettings(vector<string>* logins){
@@ -912,10 +912,11 @@ void loginsettings(vector<string>* logins){
 		cout << "\t\tHOME > LOGIN SETTINGS" << endl << endl;
 		cout << "\t\t\t 1: Change Password" << endl;
 		cout << "\t\t\t 2: Login History" << endl;
+		cout << "\t\t\t 3: Reset Login Settings" << endl;
 		cout << "\t\t\t 0: Back " << endl;
 		cout << "\t\t\t-1: Exit" << endl;
 		int j; bool valid = false;
-		while(!valid){ cout << "\t\t\t> "; choose(&j,-1,2,&valid);} 
+		while(!valid){ cout << "\t\t\t> "; choose(&j,-1,3,&valid);}
 		valid = false;
 		if(j == 1){
 			int confirm;
@@ -952,7 +953,7 @@ void loginsettings(vector<string>* logins){
 			system("CLS");
 			header();
 			cout << "\t\tHOME > LOGIN SETTINGS > LOGIN HISTORY" << endl << endl;
-			
+
 			int q = 0;
 			cout << left << setw(68) << setfill('-') << "\t\t*"; cout << "*" << endl;
 			cout << "\t\t|                          LOGIN HISTORY                          |" << endl;
@@ -966,6 +967,17 @@ void loginsettings(vector<string>* logins){
 			}
 			cout << left << setw(68) << setfill('-') << "\t\t*"; cout << "*" << endl;
 			cout << "\n\t\t"; system("PAUSE");
+		}
+		else if(j == 3){
+            string sure;
+            cout<<"\t\tThe System automatically close if you reset the LOGIN SETTING to Restart the System"<< endl;
+            cout<<"\t\tAre you sure you want to reset LOGIN SETTING ?"<<endl;
+            while(true){
+            cout<<"\t\t1: Yes | 2: No \n\t\t> ";
+            cin>>sure;
+            if(sure == "1"){remove("loginFile.txt"); exit(0);}
+            else if(sure == "2"){ break;}
+            else {cout<<"\t\tInvalid Input.."<<endl;}}
 		}
 		else if(j == 0) break;
 		else if(j == (-1)) exit(0);
@@ -992,7 +1004,7 @@ int main(){
 		vector<BookPatron> book;
 		vector<BookPatron> patron;
 		vector<CheckOut> checkret;
-		
+
 		cout << "\t\t\t1: MANAGE BOOKS" << endl;
 		cout << "\t\t\t2: MANAGE PATRONS" << endl;
 		cout << "\t\t\t3: CHECK-OUT/RETURNS" << endl;
@@ -1006,6 +1018,6 @@ int main(){
 		if(j == 4) loginsettings(&logins);
 		if(j == 0) exit(0);
 	}
-	
+
 	return 0;
 }
