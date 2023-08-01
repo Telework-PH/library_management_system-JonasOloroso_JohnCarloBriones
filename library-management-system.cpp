@@ -66,13 +66,6 @@ int countNoOfDays(int date1[], int date2[]){ // counts the number of days betwee
    dayCount2 += countLeapYearDays(date2);
    return ( abs(dayCount1 - dayCount2) );
 }
-//int countDays(int date[]){
-//   long int dayCount = (date[2] * 365);
-//   dayCount += monthDays[date[1]];
-//   dayCount += date[0];
-//   dayCount += countLeapYearDays(date);
-//   return dayCount;
-//}
 
 struct BookPatron{ // will be the set data_type/variables for Books and Patrons
 	long ID;
@@ -388,10 +381,10 @@ void updateB(vector<BookPatron>* bkPt, vector<CheckOut>* checkout, int i){
 		pos++;
 	}
 	if(isExisting and !isSame and !isCheckedOut){
-		valid = 0;
 		int confirm;
 		cout << "\t\tAre you sure you want to update the information?" << endl;
 		cout << "\t\t1: Confirm | 2: Cancel" << endl;
+		valid = 0;
 		while(!valid){ cout << "\t\t> "; choose(&confirm,1,2,&valid);}
 		if(confirm == 1){
 			(*bkPt)[pos].ID = update.ID;
@@ -555,7 +548,7 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 	getFile(bk,1);
 	getFile(pt,2);
 	getFileC(checkret);
-	int bpos = -1, c;
+	int bpos = -1, ppos = -1,c;
 	bool isExisting = false,isBook = false, isPatron = false, valid = false;
 	CheckOut add;
 	while(true){
@@ -591,10 +584,10 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 		while(!valid){ cout << "\t\tPatron ID: "; valid = ids(&add.pID);}
 		valid = false;
 		for(int i = 0; i < (int)((*pt).size()); i++)
-			if(add.pID == (*pt)[i].ID)
-				isPatron = true;
-		if(isPatron) break;
-		else{ 
+			if(add.pID == (*pt)[i].ID){
+				isPatron = true; ppos = i;
+			}
+		if(!isPatron){ 
 			cout << "\t\tPatron did not exist" << endl;
 			cout << "\t\t1: Re-enter | 2: Back" << endl;
 			while(!valid){ cout << "\t\t> "; choose(&c,1,2,&valid);}
@@ -602,7 +595,18 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 			if(c == 1) continue;
 			if(c == 2) goto BACK;
 		}
+		if(isPatron){
+			displayInfosBookPatron((*pt)[ppos],2,0);
+			cout << "\t\tAre you sure this is the correct patron?" << endl;
+			cout << "\t\t1: Yes\n\t\t2: No\n\t\t3: Cancel" << endl;
+			while(!valid){ cout << "\t\t> "; choose(&c,1,3,&valid);}
+			valid = false;
+			if(c==1) break;
+			else if(c==2) continue;
+			else if(c==3) goto BACK;
+		}
 	}
+	
 	if(to_string(cdate[0]).length() == 1) 
 		add.date = "0"+to_string(cdate[0]);
 	else add.date = to_string(cdate[0]);
@@ -625,6 +629,7 @@ void checkOut(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<BookPatro
 		(*checkret).push_back(add);
 		(*bk)[bpos].statusAddress = "Unavailable";
 		cout << endl << "\t\tChecked-out successfully!" << endl << endl;
+		cout << endl << "\t\tPlease return book before 21 days to avoid fine." << endl << endl;
 	}
 	setFileC(checkret); 
 	setFile(bk,1);
@@ -768,7 +773,6 @@ void displayCheckout(vector<CheckOut>* checkret,int i){
 								swap(d[j],d[j+1]);
 								swap((*checkret)[j],(*checkret)[j+1]);
 							}
-					cout << (int)(*checkret).size() << endl;
 					system("PAUSE");
 				}
 			}else break;
@@ -801,9 +805,11 @@ void manageCheckRet(vector<CheckOut>* checkret,vector<BookPatron>* bk,vector<Boo
 		else if(j == 0) break;
 		else if(j == -1) exit(0);
 	}
-}
+} 
 
-void enterPassword(string* pass){ //function for entering password by masking the input
+//function for entering password by masking the input
+ //function for entering password by masking the input
+void enterPassword(string* pass){
 	char ch;
 	ch = _getch();
 	while(ch != 13){
