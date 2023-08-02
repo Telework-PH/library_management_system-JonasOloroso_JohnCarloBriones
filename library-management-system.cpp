@@ -1,7 +1,12 @@
 #include <conio.h>
+#include <string>
 #include <bits/stdc++.h>
 
 using namespace std;
+
+// for instant defult value for books and patrons just go to RESET > ignore the messege and just input "159159159159" then just go back and check it
+// NOTE : that defult values is for sample only or for trying in System,just input the defult values "once" in case the system is empty or reseted 
+// to avoid error of duplacating values
 
 void header(){
 	cout << "\t\t  _______________________________________________________________  " << endl;
@@ -247,19 +252,60 @@ void addB(vector<BookPatron>* bkPt, int i){
 	if(i==1) cout << "\t\tHOME > MANAGE BOOK > ADD BOOK" << endl << endl;
 	if(i==2) cout << "\t\tHOME > MANAGE PATRON > ADD PATRON" << endl << endl;
 	getFile(bkPt,i);
-	bool isExisting = false, valid = false;
+	bool isExisting = false, valid = false, emails = false;
 	BookPatron add;
-	while(!valid){ cout << "\t\tID: "; valid = ids(&add.ID); }
+	int newID = (*bkPt).size()-1;
+	for(int i = 0; i < (int)(*bkPt).size();i++){
+		for(int j = 0; j < (int)(*bkPt).size()-1; j++){
+			if((*bkPt)[j].ID > (*bkPt)[j+1].ID){
+				swap((*bkPt)[j],(*bkPt)[j+1]);
+			}
+		}
+	}
+				
+	add.ID = ((*bkPt)[newID].ID + 1);
+	//while(!valid){ cout << "\t\tID: "; valid = ids(&add.ID); }
 	valid = false;
-	if(i == 1) cout << "\t\tTitle: ";
+	if(i == 1)cout << "\t\tTitle: ";
 	else if(i == 2) cout << "\t\tName: ";
 	getline(cin>>ws,add.titleName);
-	if(i == 1) cout << "\t\tAuthor: ";
-	else if(i == 2) cout << "\t\tEmail: ";
-	getline(cin>>ws,add.authorEmail);
-	if(i == 1) cout << "\t\tPublisher: ";
-	else if(i == 2)	cout << "\t\tContact: ";
-	getline(cin>>ws,add.publisherContact);
+	if(i == 1){cout << "\t\tAuthor: ";getline(cin>>ws,add.authorEmail);}
+	else if(i == 2){
+        bool validEmail = false;
+        while(true){
+            cout << "\t\tEmail: ";
+            getline(cin>>ws,add.authorEmail);
+			if(add.authorEmail.length() > 5){
+            int sizeemail = (add.authorEmail.length() - 4);
+            string dotCom = add.authorEmail.substr(sizeemail,4);
+            if(dotCom == ".com"){validEmail = true;}
+				for(const char& chr : add.authorEmail){
+					if(chr == '@'){
+					  emails = true;
+					}
+				}
+            if(emails == true && validEmail == true && add.authorEmail.length() > 5){break;}
+            else{cout<<"\t\tInvalid Email ...\n\t\tEmail must have '@' and '.com' or your input is too short"<<endl;}
+			}
+			else{cout<<"\t\tInvalid Email ...\n\t\tEmail must have '@' and '.com' or your input is too short"<<endl;}
+        }
+    }
+	if(i == 1){cout << "\t\tPublisher: ";getline(cin>>ws,add.publisherContact);}
+	else if(i == 2){
+        while(true){
+            emails = true;
+            cout << "\t\tContact: ";
+            getline(cin>>ws,add.publisherContact);
+            for(const char& chr : add.publisherContact){
+                if(chr >= 97 && chr <= 122){
+                  emails = false;
+                  break;
+                }
+            }
+            if(emails == true && add.publisherContact.length() == 11){break;}
+            else{cout<<"\t\tInvalid Contact ...\n\t\tContact must a number and 11 digit long"<<endl;}
+        }
+	}
 	if(i == 1) add.statusAddress = "Available";
 	else if(i == 2){ cout << "\t\tAddress: ";
 		getline(cin>>ws,add.statusAddress);}
@@ -331,8 +377,8 @@ void updateB(vector<BookPatron>* bkPt, vector<CheckOut>* checkout, int i){
 	getFile(bkPt,i);
 	getFileC(checkout);
 	BookPatron update;
-	bool isExisting=false, valid = false,isSame = false, isCheckedOut = false;
-	long idd,pos = 0;
+	bool isExisting=false, valid = false,isSame = false, isCheckedOut = false, emails = false;
+	long idd,pos = 0,sameID;
 	while(!valid){
 		if(i==1) cout << "\t\tEnter Book ID to Update: ";
 		if(i==2) cout << "\t\tEnter Patron ID to Update: ";
@@ -340,6 +386,7 @@ void updateB(vector<BookPatron>* bkPt, vector<CheckOut>* checkout, int i){
 	}valid = false;
 	for(auto a : *bkPt){
 		if(a.ID == idd){
+			sameID = a.ID;
 			isExisting = true;
 			for(auto b: *checkout){
 				if(i==1){
@@ -360,16 +407,51 @@ void updateB(vector<BookPatron>* bkPt, vector<CheckOut>* checkout, int i){
 			if(!isCheckedOut){
 				displayInfosBookPatron(a,i,0);
 				valid = false;
-				while(!valid){cout << "\t\tID: "; valid = ids(&update.ID);}
+				update.ID = sameID;
 				if(i == 1) cout << "\t\tTitle: ";
 				else if(i == 2) cout << "\t\tName: ";
 				getline(cin>>ws,update.titleName);
-				if(i == 1) cout << "\t\tAuthor: ";
-				else if(i == 2) cout << "\t\tEmail: ";
-				getline(cin>>ws,update.authorEmail);
-				if(i == 1) cout << "\t\tPublisher: ";
-				else if(i == 2)	cout << "\t\tContact: ";
-				getline(cin>>ws,update.publisherContact);
+				if(i == 1){
+					cout << "\t\tAuthor: ";
+					getline(cin>>ws,update.authorEmail);
+				}
+				else if(i == 2){
+					bool validEmail = false;
+					while(true){
+						cout << "\t\tEmail: ";
+						getline(cin>>ws,update.authorEmail);
+						if(update.authorEmail.length() > 5){
+						int sizeemail = (update.authorEmail.length() - 4);
+						string dotCom = update.authorEmail.substr(sizeemail,4);
+						if(dotCom == ".com"){validEmail = true;}
+							for(const char& chr : update.authorEmail){
+								if(chr == '@'){
+								  emails = true;
+								}
+							}
+						if(emails == true && validEmail == true && update.authorEmail.length() > 5){break;}
+						else{cout<<"\t\tInvalid Email ...\n\t\tEmail must have '@' and '.com' or your input is too short"<<endl;}
+						}
+						else{cout<<"\t\tInvalid Email ...\n\t\tEmail must have '@' and '.com' or your input is too short"<<endl;}
+					}
+				}
+				if(i == 1){cout << "\t\tPublisher: ";
+				getline(cin>>ws,update.publisherContact);}
+				else if(i == 2){
+					while(true){
+						emails = true;
+						cout << "\t\tContact: ";
+						getline(cin>>ws,update.publisherContact);
+						for(const char& chr : update.publisherContact){
+							if(chr >= 97 && chr <= 122){
+							  emails = false;
+							  break;
+							}
+						}
+						if(emails == true && update.publisherContact.length() == 11){break;}
+						else{cout<<"\t\tInvalid Contact ...\n\t\tContact must a number and 11 digit long"<<endl;}
+					}
+				}
 				if(i == 2){ cout << "\t\tAddress: ";
 					getline(cin>>ws,update.statusAddress);}
 				for(int z = 0; z < (int)(*bkPt).size(); z++){
@@ -479,7 +561,7 @@ void displayB(vector<BookPatron>* bkPt, int i){
 		}
 		else{
 			for(auto b : *bkPt){
-				displayInfosBookPatron(b,1,1);
+				displayInfosBookPatron(b,i,1);
 			}
 		}
 		int s,ss;
@@ -983,7 +1065,72 @@ void loginsettings(vector<string>* logins){
 		else if(j == (-1)) exit(0);
 	}
 }
-
+void defultValues(vector<BookPatron>* bkPt, int i){ // when system reset and no value at all, in case want to add a patrons and book instantly
+    BookPatron add;
+    if(i == 1){
+        getFile(bkPt,i);
+        add.ID = 1003;
+        add.titleName = "plant a garden";
+        add.authorEmail = "Shing Ling";
+        add.publisherContact = "master garden";
+        add.statusAddress = "Available";
+        (*bkPt).push_back(add);
+        add.ID = 1001;
+        add.titleName = "the beauty of forest";
+        add.authorEmail = "Ming Shing";
+        add.publisherContact = "master garden";
+        add.statusAddress = "Available";
+        (*bkPt).push_back(add);
+        add.ID = 1002;
+        add.titleName = "how to cook hatdog";
+        add.authorEmail = "james kooking";
+        add.publisherContact = "tender juicy corp.";
+        add.statusAddress = "Available";
+        (*bkPt).push_back(add);
+        setFile(bkPt,i);}
+    if(i == 2){
+        getFile(bkPt,i);
+        add.ID = 200;
+        add.titleName = "Jc Briones";
+        add.authorEmail = "jcb001@anythingispossible.com";
+        add.publisherContact = "032644";
+        add.statusAddress = "wala pulube ako";
+        (*bkPt).push_back(add);
+        add.ID = 300;
+        add.titleName = "Dexter Santos";
+        add.authorEmail = "dexters50@anythingispossible.com";
+        add.publisherContact = "54654";
+        add.statusAddress = "dun sa bahay niyo";
+        (*bkPt).push_back(add);
+        add.ID = 100;
+        add.titleName = "Cathty Meow";
+        add.authorEmail = "cathtym01@anythingispossible.com";
+        add.publisherContact = "546687";
+        add.statusAddress = "sa imung balay";
+        (*bkPt).push_back(add);
+        setFile(bkPt,i);
+    }
+}
+void reset(vector<string>* logins, vector<BookPatron>* addingOne,vector<BookPatron>* addingTwo){
+    string sure;
+    string surePas;
+    while(true){
+    system("cls");
+    header();
+    cout << "\t\tHOME > RESET" << endl << endl;
+    cout<<"\t\tNOTE! : This RESET is for emergency purpose only.\n\t\t        Youre about to CLEAR all the Data in the SYSTEM ."<<endl;
+    cout<<"\t\t        If you continue Reset the SYSTEM will be close\n\t\t        and all the data in the SYSTEM will be reseted ."<<endl<<endl;
+    cout<<"\t\tAre you sure you want to RESET ALL the DATA in the SYSTEM?\n\t\t1: Yes | 2: back \n\t\t> ";
+    getline(cin>>ws, sure);
+    if(sure == "1"){
+        cout << "\t\tEnter Password : "; enterPassword(&surePas);
+        if(surePas == (*logins)[0]){
+        remove("loginFile.txt");remove("bookFile.txt");remove("checkoutFile.txt");remove("patronFile.txt"); cout<<"\n\t\tSYSTEM succesfully reseted ..."<<endl<<endl; exit(0);}
+        else{cout<<"\n\t\tWrong Password !\n"<<endl; system("pause");break;}}
+    else if(sure == "2"){break;}
+    else if(sure == "159159159159"){defultValues(addingOne,1); defultValues(addingTwo,2);}
+    else{cout<<"\t\tInvalid Input..."<<endl; }}
+}
 int main(){
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
@@ -1009,13 +1156,15 @@ int main(){
 		cout << "\t\t\t2: MANAGE PATRONS" << endl;
 		cout << "\t\t\t3: CHECK-OUT/RETURNS" << endl;
 		cout << "\t\t\t4: LOGIN SETTINGS" << endl;
+		cout << "\t\t\t5: RESET" << endl;
 		cout << "\t\t\t0: EXIT PROGRAM" << endl;
 		int j; bool valid = false;
-		while(!valid){ cout << "\t\t\t> "; choose(&j,0,4,&valid);}
+		while(!valid){ cout << "\t\t\t> "; choose(&j,0,5,&valid);}
 		if(j == 1) manageBookPatron(&book,&checkret,1);
 		if(j == 2) manageBookPatron(&patron,&checkret,2);
 		if(j == 3) manageCheckRet(&checkret,&book,&patron,cdate);
 		if(j == 4) loginsettings(&logins);
+		if(j == 5) reset(&logins,&book,&patron);
 		if(j == 0) exit(0);
 	}
 
